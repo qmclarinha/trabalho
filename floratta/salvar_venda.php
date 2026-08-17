@@ -1,3 +1,4 @@
+//mudar
 <?php
 if(!isset($_SESSION)) SESSION_START();
 
