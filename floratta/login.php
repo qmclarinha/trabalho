@@ -26,11 +26,11 @@
 
     <h2>Entrar</h2>
 
-    <form action="processa_login.php" method="POST" class="formulario">
+    <form action="banco.php" method="POST" class="formulario">
 
         <input type="text" name="login" placeholder="Digite seu login" required>
         <input type="password" name="senha" placeholder="Digite sua senha" required>
-        <input type="submit" value="Entrar" name="b2" class="botao-form">
+        <input type="submit" name="B3" value="Entrar" name="b2" class="botao-form">
 
     </form>
 
