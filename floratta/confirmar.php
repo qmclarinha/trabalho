@@ -56,7 +56,7 @@ $valor   = $_POST['valor'];
         </p>
         <br>
 
-        <form action="salvar_venda.php" method="POST">
+        <form action="banco.php" method="POST">
 
             <input type="hidden" name="produto" value="<?php echo $produto; ?>">
             <input type="hidden" name="valor" value="<?php echo $valor; ?>">
