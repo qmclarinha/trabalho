@@ -30,11 +30,11 @@ if(!isset($_SESSION)) SESSION_START();
 
     <h2>Crie seu Login</h2>
 
-    <form action="salvar_login.php" method="POST" class="formulario">
+    <form action="banco.php" method="POST" class="formulario">
 
         <input type="text" name="login" placeholder="Crie um login" required>
         <input type="password" name="senha" placeholder="Crie uma senha" required>
-        <input type="submit" value="Finalizar Cadastro" class="botao-form">
+        <input type="submit" name="B2" value="Finalizar Cadastro" class="botao-form">
 
     </form>
 
