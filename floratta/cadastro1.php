@@ -25,7 +25,7 @@
 
         <h2>Cadastro de Usuário</h2>
 
-        <form action="salvar_usuario.php" method="POST" class="formulario">
+        <form action="banco.php" method="POST" class="formulario">
 
             <input type="text" name="nome" placeholder="Nome completo" required>
             <input type="text" name="cpf" placeholder="CPF" required>
@@ -34,7 +34,7 @@
             <input type="text" name="cidade" placeholder="Cidade" required>
             <input type="text" name="estado" placeholder="Estado" required>
             <input type="text" name="cep" placeholder="CEP" required>
-            <input type="submit" value="Continuar" class="botao-form">
+            <input type="submit" name="B1" value="Continuar" class="botao-form">
 
         </form>
     </section>
