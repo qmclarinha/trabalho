@@ -65,7 +65,7 @@ $valor   = $_POST['valor'];
 
             <br><br>
 
-            <input type="submit" value="Confirmar Compra" class="botao-form">
+            <input type="submit" name="B4" value="Confirmar Compra" class="botao-form">
 
         </form>
 
