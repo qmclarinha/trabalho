@@ -2,7 +2,7 @@
 
 $server = "localhost";
 $user = "root";
-$password = "Mysql.ifba39";
+$password = "";
 $db = "florattaa";
 
 ?>
