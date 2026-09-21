@@ -1,6 +1,5 @@
 <?php
 if(!isset($_SESSION)) SESSION_START();
-?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -42,3 +41,4 @@ if(!isset($_SESSION)) SESSION_START();
 
 </body>
 </html>
+?>
