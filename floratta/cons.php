@@ -3,6 +3,6 @@
 $server = "localhost";
 $user = "root";
 $password = "";
-$db = "florattaa";
+$db = "floratta";
 
 ?>
