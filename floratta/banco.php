@@ -1,7 +1,7 @@
 <?php
 
-include "app/cons.php";
-require_once "app/DLL.php";
+include "cons.php";
+require_once "DLL.php";
 
 extract($_POST);
 
