@@ -1,11 +1,10 @@
 <?php
-if(!isset($_SESSION)) SESSION_START();
+if(!isset($_SESSION)) session_start();
 
 include "cons.php";
-require_once "DLL.php";
+require_once "dll.php";
 
-$consulta = "SELECT * FROM produtos";
-
+$consulta = "SELECT * FROM produtos LIMIT 3";
 $resultado = banco($server, $user, $password, $db, $consulta);
 ?>
 
@@ -33,6 +32,7 @@ $resultado = banco($server, $user, $password, $db, $consulta);
 
             <?php
             if(isset($_SESSION['Logado']) && $_SESSION['Logado'] == 'ok'){
+                echo "<a href='carrinho.php'>Carrinho</a>";
                 echo "<a href='sair.php'>Sair</a>";
             } else {
                 echo "<a href='login.php'>Login</a>";
@@ -63,49 +63,17 @@ $resultado = banco($server, $user, $password, $db, $consulta);
 
         <div class="produtos">
 
-            <div class="card">
-                <img src="imagens/planta3.jpg" alt="Planta">
-                <h3>Cacto decorativo</h3>
-                <p class="descricao">
-                    Resistente e de baixa manutenção, perfeito para ambientes minimalistas.
-                </p>
-                <p class="preco">
-                    R$ 24,90
-                </p>
-                <a href="login.php" class="botao">
-                    Comprar
-                </a>
-            </div>
-
-            <div class="card">
-                <img src="imagens/planta6.jpg" alt="Planta">
-                <h3>Espada-de-São-Jorge</h3>
-                <p class="descricao">
-                    Muito resistente, ideal para interiores e purificação do ambiente.
-                </p>
-                <p class="preco">
-                    R$ 45,90
-                </p>
-
-                <a href="login.php" class="botao">
-                    Comprar
-                </a>
-            </div>
-
-
-            <div class="card">
-                <img src="imagens/planta10.jpg" alt="Planta">
-                <h3>Antúrio vermelho</h3>
-                <p class="descricao">
-                    Planta ornamental comm flores vermelhas vibrantes e brilhantes.
-                </p>
-                <p class="preco">
-                    R$ 54,90
-                </p>
-                <a href="login.php" class="botao">
-                    Comprar
-                </a>
-            </div>
+            <?php
+            while($linha = $resultado->fetch_assoc()){
+                echo "<div class='card'>";
+                echo "<img src='imagens/".$linha['imagem']."' alt='".$linha['nome']."'>";
+                echo "<h3>".$linha['nome']."</h3>";
+                echo "<p class='descricao'>".$linha['descricao']."</p>";
+                echo "<p class='preco'>R$ ".number_format($linha['preco'], 2, ',', '.')."</p>";
+                echo "<a href='produtos.php' class='botao'>Comprar</a>";
+                echo "</div>";
+            }
+            ?>
 
         </div>
 
