@@ -1,21 +1,18 @@
 <?php
-if(!isset($_SESSION)) SESSION_START();
+if(!isset($_SESSION)) session_start();
 
-if($_SESSION['Logado'] != 'ok'){
+if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
     header('Location: login.php');
     exit;
 }
 
-include "cons.php";
-require_once "DLL.php";
+if(!isset($_SESSION['NumeroPedido'])){
+    header('Location: produtos.php');
+    exit;
+}
 
-$id_produto = $_SESSION['produto'];
-
-$consulta = "SELECT * FROM produtos WHERE id = '$id_produto'";
-
-$resultado = banco($server, $user, $password, $db, $consulta);
-
-$produto = $resultado->fetch_assoc();
+$numero = $_SESSION['NumeroPedido'];
+unset($_SESSION['NumeroPedido']);
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +20,7 @@ $produto = $resultado->fetch_assoc();
 
 <head>
     <meta charset="UTF-8">
-    <title>Confirmar Compra</title>
+    <title>Compra realizada - Floratta</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -42,40 +39,19 @@ $produto = $resultado->fetch_assoc();
 </header>
 
 <section class="destaques">
-    <h2>Confirmar Compra</h2>
 
+    <h2>Compra realizada com sucesso!</h2>
     <div class="formulario">
 
-        <h3>Dados da Compra</h3>
-
-        <br>
-
         <?php
-        echo "<p><b>Login:</b> ".$_SESSION['Login']."</p>";
-        echo "<p><b>CPF:</b> ".$_SESSION['Cpf']."</p>";
+        echo "<h3>Obrigada pela compra, ".$_SESSION['Nome']."!</h3>";
         ?>
 
         <br>
-        <p>
-            <b>Produto:</b> <?php echo $produto; ?>
-        </p>
-        <p>
-            <b>Valor:</b> R$ <?php echo $valor; ?>
-        </p>
+        <p><b>Número do pedido:</b> <?php echo $numero; ?></p>
         <br>
 
-        <form action="banco.php" method="POST">
-
-            <input type="hidden" name="produto" value="<?php echo $produto; ?>">
-            <input type="hidden" name="valor" value="<?php echo $valor; ?>">
-
-            <input type="text" name="pagamento" placeholder="Forma de pagamento" required>
-
-            <br><br>
-
-            <input type="submit" name="B4" value="Confirmar Compra" class="botao-form">
-
-        </form>
+        <a href="produtos.php" class="botao">Continuar Comprando</a>
 
     </div>
 
