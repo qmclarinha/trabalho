@@ -1,6 +1,9 @@
 <?php
 if(!isset($_SESSION)) SESSION_START();
 
+include "cons.php";
+require_once "DLL.php";
+
 if($_SESSION['Logado'] != 'ok'){
     header('Location: login.php');
     exit;
