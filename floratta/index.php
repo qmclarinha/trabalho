@@ -1,5 +1,12 @@
 <?php
 if(!isset($_SESSION)) SESSION_START();
+
+include "cons.php";
+require_once "DLL.php";
+
+$consulta = "SELECT * FROM produtos";
+
+$resultado = banco($server, $user, $password, $db, $consulta);
 ?>
 
 <!DOCTYPE html>
