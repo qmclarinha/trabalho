@@ -1,16 +1,27 @@
 <?php
-if(!isset($_SESSION)) SESSION_START();
+if(!isset($_SESSION)) session_start();
 
 include "cons.php";
-require_once "DLL.php";
+require_once "dll.php";
 
-if($_SESSION['Logado'] != 'ok'){
+if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
     header('Location: login.php');
     exit;
 }
 
-if(isset($_POST['planta'])){
-    $_SESSION['carrinho'][] = $_POST['planta'];
+$id_usuario = $_SESSION['IdUsuario'];
+
+$consulta = "SELECT carrinho.id AS id_carrinho, carrinho.quantidade, produtos.nome, produtos.preco
+             FROM carrinho
+             INNER JOIN produtos ON carrinho.id_produto = produtos.id
+             WHERE carrinho.id_usuario = '$id_usuario'";
+$resultado = banco($server, $user, $password, $db, $consulta);
+
+$total = 0;
+$itens = [];
+while($linha = $resultado->fetch_assoc()){
+    $itens[] = $linha;
+    $total += $linha['preco'] * $linha['quantidade'];
 }
 ?>
 
@@ -44,26 +55,29 @@ if(isset($_POST['planta'])){
     <div class="formulario">
 
         <?php
+        if(count($itens) > 0){
 
-        if(isset($_SESSION['carrinho'])){
-
-            foreach($_SESSION['carrinho'] as $planta){
-
-                echo "<p>".$planta."</p>";
+            foreach($itens as $item){
+                echo "<p>";
+                echo $item['nome']." — Qtd: ".$item['quantidade']." — R$ ".number_format($item['preco'] * $item['quantidade'], 2, ',', '.');
+                echo "</p>";
+                echo "
+                <form action='banco.php' method='POST' style='display:inline;'>
+                <input type='hidden' name='id_carrinho' value='".$item['id_carrinho']."'>
+                <input type='submit' value='Remover' name='B6' class='botao-form'>
+                </form>
+                ";
                 echo "<br>";
             }
 
+            echo "<h3>Total: R$ ".number_format($total, 2, ',', '.')."</h3>";
+            echo "<br>";
+            echo "<a href='finalizar.php' class='botao'>Finalizar Compra</a>";
+
         }else{
-
-            echo "<p>Carrinho vazio.</p>";
+            echo "<p>Carrinho vazio</p>";
         }
-
         ?>
-
-        <br>
-        <a href="finalizar.php" class="botao">
-            Finalizar Compra
-        </a>
 
     </div>
 </section>
