@@ -9,12 +9,15 @@ if(!isset($_SESSION)) SESSION_START();
 
 if(isset($B1)){
 
+    $consulta = "INSERT INTO usuarios (id, nome, cpf, endereco, bairro, cidade, estado, cep) VALUES (NULL, '$nome', '$cpf', '$endereco', '$bairro', '$cidade', '$estado', '$cep')";
+    banco($server, $user, $password, $db, $consulta);
+    $consulta = "SELECT id FROM usuarios WHERE cpf = '$cpf'";
+    $resultado = banco($server, $user, $password, $db, $consulta);
+    $usuario = $resultado->fetch_assoc();
+
+    $_SESSION['IdUsuario'] = $usuario['id'];
     $_SESSION['Cpf'] = $cpf;
     $_SESSION['Nome'] = $nome;
-
-    $consulta = "INSERT INTO usuarios (id, nome, cpf, endereco, bairro, cidade, estado, cep) VALUES (NULL, '$nome', '$cpf', '$endereco', '$bairro', '$cidade', '$estado', '$cep')";
-
-    banco($server, $user, $password, $db, $consulta);
 
     header("Location: cadastro2.php");
     exit();
@@ -22,10 +25,10 @@ if(isset($B1)){
 
 if(isset($B2)){
 
-    $cpf = $_SESSION['Cpf'];
+    $id_usuario = $_SESSION['IdUsuario'];
     $senha = md5($senha);
 
-    $consulta = "INSERT INTO login (id, login, senha, cpf) VALUES (NULL, '$login', '$senha', '$cpf')";
+    $consulta = "INSERT INTO login (id, login, senha, id_usuario) VALUES (NULL, '$login', '$senha', '$id_usuario')";
 
     banco($server, $user, $password, $db, $consulta);
 
@@ -49,15 +52,6 @@ if(isset($B3)){
 
             $_SESSION['Logado'] = 'ok';
             $_SESSION['Login'] = $linha['login'];
-            $_SESSION['Cpf'] = $linha['cpf'];
-
-            $consulta = "SELECT * FROM usuarios WHERE cpf = '".$linha['cpf']."'";
-
-            $resultado = banco($server, $user, $password, $db, $consulta);
-
-            $usuario = $resultado->fetch_assoc();
-
-            $_SESSION['Nome'] = $usuario['nome'];
 
             header("Location: confirmar.php");
             exit();
