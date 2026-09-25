@@ -1,12 +1,28 @@
 <?php
-if(!isset($_SESSION)) SESSION_START();
+if(!isset($_SESSION)) session_start();
 
-if($_SESSION['Logado'] != 'ok'){
+include "cons.php";
+require_once "dll.php";
+
+if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
     header('Location: login.php');
     exit;
 }
 
-unset($_SESSION['carrinho']);
+$id_usuario = $_SESSION['IdUsuario'];
+
+$consulta = "SELECT carrinho.quantidade, produtos.nome, produtos.preco
+             FROM carrinho
+             INNER JOIN produtos ON carrinho.id_produto = produtos.id
+             WHERE carrinho.id_usuario = '$id_usuario'";
+$resultado = banco($server, $user, $password, $db, $consulta);
+
+$total = 0;
+$itens = [];
+while($linha = $resultado->fetch_assoc()){
+    $itens[] = $linha;
+    $total += $linha['preco'] * $linha['quantidade'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +30,7 @@ unset($_SESSION['carrinho']);
 
 <head>
     <meta charset="UTF-8">
-    <title>Compra Finalizada</title>
+    <title>Finalizar Compra - Floratta</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -33,25 +49,33 @@ unset($_SESSION['carrinho']);
 </header>
 
 <section class="destaques">
+    <h2>Finalizar Compra</h2>
 
-    <h2>Compra Finalizada</h2>
     <div class="formulario">
 
         <?php
-        echo "<h3>Obrigada pela compra, ".$_SESSION['Nome']."!</h3>";
+        if(count($itens) == 0){
+            echo "<p>Seu carrinho está vazio.</p>";
+            echo "<a href='produtos.php' class='botao'>Ver plantas</a>";
+        }else{
+            echo "<h3>Resumo do pedido</h3><br>";
+            foreach($itens as $item){
+                echo "<p>".$item['nome']." — Qtd: ".$item['quantidade']." — R$ ".number_format($item['preco'] * $item['quantidade'], 2, ',', '.')."</p>";
+            }
+            echo "<h3>Total: R$ ".number_format($total, 2, ',', '.')."</h3><br>";
+
+            echo "
+            <form action='banco.php' method='POST'>
+                <input type='text' name='pagamento' placeholder='Forma de pagamento' required>
+                <br><br>
+                <input type='submit' name='B4' value='Confirmar Compra' class='botao-form'>
+            </form>
+            ";
+        }
         ?>
 
-        <br>
-        <p>
-            Seu pedido foi realizado com sucesso.
-        </p>
-        <br>
-
-        <a href="produtos.php" class="botao">
-            Continuar Comprando
-        </a>
-
     </div>
+
 </section>
 </body>
 </html>
