@@ -71,9 +71,14 @@ if(isset($B3)){
 
 if(isset($B4)){
 
-    $produto = $_POST['produto'];
-    $valor = $_POST['valor'];
     $pagamento = $_POST['pagamento'];
+    $id_produto = $_SESSION['produto'];
+
+    $consulta = "SELECT * FROM produtos WHERE id = '$id_produto'";
+
+    $resultado = banco($server, $user, $password, $db, $consulta);
+
+    $produto = $resultado->fetch_assoc();
 
     $numero = rand(1000,9999);
     $data = date('d/m/Y');
@@ -82,12 +87,12 @@ if(isset($B4)){
     $login = $_SESSION['Login'];
     $cpf = $_SESSION['Cpf'];
 
-    $consulta = "INSERT INTO vendas (id, numero, login, cpf, produto, valor, data, hora, pagamento) VALUES (NULL, '$numero', '$login', '$cpf', '$produto', '$valor', '$data', '$hora', '$pagamento')";
+    $consulta = "INSERT INTO vendas (id, numero, login, cpf, produto, valor, data, hora, pagamento) VALUES (NULL, '$numero', '$login', '$cpf', '".$produto['nome']."', '".$produto['preco']."', '$data', '$hora', '$pagamento')";
 
     banco($server, $user, $password, $db, $consulta);
 
- unset($_SESSION['carrinho']);
-    ?>
+    unset($_SESSION['carrinho']);
+    unset($_SESSION['produto']);
 
     <!DOCTYPE html>
     <html lang="pt-br">
