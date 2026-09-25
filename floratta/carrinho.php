@@ -6,8 +6,8 @@ if($_SESSION['Logado'] != 'ok'){
     exit;
 }
 
-if(isset($_GET['planta'])){
-    $_SESSION['carrinho'][] = $_GET['planta'];
+if(isset($_POST['planta'])){
+    $_SESSION['carrinho'][] = $_POST['planta'];
 }
 ?>
 
