@@ -30,7 +30,7 @@
 
         <input type="text" name="login" placeholder="Digite seu login" required>
         <input type="password" name="senha" placeholder="Digite sua senha" required>
-        <input type="submit" name="B3" value="Entrar" name="b2" class="botao-form">
+        <input type="submit" name="B3" value="Entrar" class="botao-form">
 
     </form>
 
