@@ -1,16 +1,16 @@
 <?php
+if(!isset($_SESSION)) session_start();
 
 include "cons.php";
-require_once "DLL.php";
+require_once "dll.php";
 
 extract($_POST);
-
-if(!isset($_SESSION)) SESSION_START();
 
 if(isset($B1)){
 
     $consulta = "INSERT INTO usuarios (id, nome, cpf, endereco, bairro, cidade, estado, cep) VALUES (NULL, '$nome', '$cpf', '$endereco', '$bairro', '$cidade', '$estado', '$cep')";
     banco($server, $user, $password, $db, $consulta);
+
     $consulta = "SELECT id FROM usuarios WHERE cpf = '$cpf'";
     $resultado = banco($server, $user, $password, $db, $consulta);
     $usuario = $resultado->fetch_assoc();
@@ -29,7 +29,6 @@ if(isset($B2)){
     $senha = md5($senha);
 
     $consulta = "INSERT INTO login (id, login, senha, id_usuario) VALUES (NULL, '$login', '$senha', '$id_usuario')";
-
     banco($server, $user, $password, $db, $consulta);
 
     header("Location: login.php");
@@ -39,9 +38,7 @@ if(isset($B2)){
 if(isset($B3)){
 
     $consulta = "SELECT * FROM login WHERE login = '$login'";
-
     $resultado = banco($server, $user, $password, $db, $consulta);
-
     $linha = $resultado->fetch_assoc();
 
     if($linha){
@@ -50,80 +47,97 @@ if(isset($B3)){
 
         if($senha == $linha['senha']){
 
+            $consulta = "SELECT * FROM usuarios WHERE id = '".$linha['id_usuario']."'";
+            $resultado = banco($server, $user, $password, $db, $consulta);
+            $usuario = $resultado->fetch_assoc();
+
             $_SESSION['Logado'] = 'ok';
             $_SESSION['Login'] = $linha['login'];
+            $_SESSION['IdUsuario'] = $linha['id_usuario'];
+            $_SESSION['Cpf'] = $usuario['cpf'];
+            $_SESSION['Nome'] = $usuario['nome'];
 
-            header("Location: confirmar.php");
+            header("Location: produtos.php");
             exit();
 
         }else{
-
             echo "Senha incorreta.";
-
+            echo "<br><a href='login.php'>Voltar</a>";
         }
 
     }else{
-
         echo "Usuário não encontrado.";
-
+        echo "<br><a href='login.php'>Voltar</a>";
     }
+}
+
+if(isset($B5)){
+
+    $id_usuario = $_SESSION['IdUsuario'];
+    $id_produto = $id_produto;
+    $quantidade = (int)$quantidade;
+    if($quantidade < 1) $quantidade = 1;
+
+    $consulta = "SELECT * FROM carrinho WHERE id_usuario = '$id_usuario' AND id_produto = '$id_produto'";
+    $resultado = banco($server, $user, $password, $db, $consulta);
+    $item = $resultado->fetch_assoc();
+
+    if($item){
+        $nova_quantidade = $item['quantidade'] + $quantidade;
+        $consulta = "UPDATE carrinho SET quantidade = '$nova_quantidade' WHERE id = '".$item['id']."'";
+    }else{
+        $consulta = "INSERT INTO carrinho (id, id_usuario, id_produto, quantidade) VALUES (NULL, '$id_usuario', '$id_produto', '$quantidade')";
+    }
+    banco($server, $user, $password, $db, $consulta);
+
+    header("Location: carrinho.php");
+    exit();
+}
+
+if(isset($B6)){
+
+    $id_carrinho = $id_carrinho;
+    $id_usuario = $_SESSION['IdUsuario'];
+
+    $consulta = "DELETE FROM carrinho WHERE id = '$id_carrinho' AND id_usuario = '$id_usuario'";
+    banco($server, $user, $password, $db, $consulta);
+
+    header("Location: carrinho.php");
+    exit();
 }
 
 if(isset($B4)){
 
-    $pagamento = $_POST['pagamento'];
-    $id_produto = $_SESSION['produto'];
-
-    $consulta = "SELECT * FROM produtos WHERE id = '$id_produto'";
-
-    $resultado = banco($server, $user, $password, $db, $consulta);
-
-    $produto = $resultado->fetch_assoc();
-
-    $numero = rand(1000,9999);
-    $data = date('d/m/Y');
-    $hora = date('H:i');
-
+    $id_usuario = $_SESSION['IdUsuario'];
     $login = $_SESSION['Login'];
     $cpf = $_SESSION['Cpf'];
 
-    $consulta = "INSERT INTO vendas (id, numero, login, cpf, produto, valor, data, hora, pagamento) VALUES (NULL, '$numero', '$login', '$cpf', '".$produto['nome']."', '".$produto['preco']."', '$data', '$hora', '$pagamento')";
+    $consulta = "SELECT carrinho.id_produto, carrinho.quantidade, produtos.preco
+                 FROM carrinho
+                 INNER JOIN produtos ON carrinho.id_produto = produtos.id
+                 WHERE carrinho.id_usuario = '$id_usuario'";
+    $resultado = banco($server, $user, $password, $db, $consulta);
 
+    $numero = rand(1000,9999);
+    $data = date('Y-m-d');
+    $hora = date('H:i');
+
+    while($item = $resultado->fetch_assoc()){
+        $id_produto = $item['id_produto'];
+        $quantidade = $item['quantidade'];
+        $valor = $item['preco'] * $item['quantidade'];
+
+        $consulta = "INSERT INTO vendas (id, numero, login, cpf, id_produto, quantidade, valor, data, hora, pagamento)
+                     VALUES (NULL, '$numero', '$login', '$cpf', '$id_produto', '$quantidade', '$valor', '$data', '$hora', '$pagamento')";
+        banco($server, $user, $password, $db, $consulta);
+    }
+
+    $consulta = "DELETE FROM carrinho WHERE id_usuario = '$id_usuario'";
     banco($server, $user, $password, $db, $consulta);
 
-    unset($_SESSION['carrinho']);
-    unset($_SESSION['produto']);
+    $_SESSION['NumeroPedido'] = $numero;
 
-    <!DOCTYPE html>
-    <html lang="pt-br">
-
-    <head>
-    <meta charset="UTF-8">
-    <title>Compra realizada - Floratta</title>
-    <link rel="stylesheet" href="estilo.css">
-    </head>
-
-    <body>
-
-    <section class="destaques">
-
-    <h2>Compra realizada com sucesso!</h2>
-
-    <div class="formulario">
-
-    <p><b>Número da venda:</b> <?php echo $numero; ?></p>
-    <p><b>Produto:</b> <?php echo $produto; ?></p>
-    <p><b>Valor:</b> R$ <?php echo $valor; ?></p>
-
-    <a href="index.php" class="botao">Voltar para o início</a>
-
-    </div>
-
-    </section>
-
-    </body>
-    </html>
-
-    <?php
+    header("Location: confirmar.php");
+    exit();
 }
 ?>
