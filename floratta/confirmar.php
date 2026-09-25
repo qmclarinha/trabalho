@@ -6,8 +6,16 @@ if($_SESSION['Logado'] != 'ok'){
     exit;
 }
 
-$produto = $_POST['produto'];
-$valor   = $_POST['valor'];
+include "cons.php";
+require_once "DLL.php";
+
+$id_produto = $_SESSION['produto'];
+
+$consulta = "SELECT * FROM produtos WHERE id = '$id_produto'";
+
+$resultado = banco($server, $user, $password, $db, $consulta);
+
+$produto = $resultado->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
