@@ -1,3 +1,7 @@
+<?php
+if(!isset($_SESSION)) session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -25,6 +29,13 @@
 <section class="destaques">
 
     <h2>Entrar</h2>
+
+    <?php
+    if(isset($_SESSION['ErroLogin'])){
+        echo "<p class='erro'>".$_SESSION['ErroLogin']."</p>";
+        unset($_SESSION['ErroLogin']);
+    }
+    ?>
 
     <form action="banco.php" method="POST" class="formulario">
 
