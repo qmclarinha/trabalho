@@ -9,12 +9,12 @@ if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
     exit;
 }
 
-$id_usuario = $_SESSION['IdUsuario'];
+$cpf = $_SESSION['Cpf'];
 
 $consulta = "SELECT carrinho.id AS id_carrinho, carrinho.quantidade, produtos.nome, produtos.preco
              FROM carrinho
              INNER JOIN produtos ON carrinho.id_produto = produtos.id
-             WHERE carrinho.id_usuario = '$id_usuario'";
+             WHERE carrinho.cpf = '$cpf'";
 $resultado = banco($server, $user, $password, $db, $consulta);
 
 $total = 0;
@@ -75,7 +75,7 @@ while($linha = $resultado->fetch_assoc()){
             echo "<a href='finalizar.php' class='botao'>Finalizar Compra</a>";
 
         }else{
-            echo "<p>Carrinho vazio</p>";
+            echo "<p>Carrinho vazio.</p>";
         }
         ?>
 
