@@ -9,12 +9,12 @@ if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
     exit;
 }
 
-$id_usuario = $_SESSION['IdUsuario'];
+$cpf = $_SESSION['Cpf'];
 
 $consulta = "SELECT carrinho.quantidade, produtos.nome, produtos.preco
              FROM carrinho
              INNER JOIN produtos ON carrinho.id_produto = produtos.id
-             WHERE carrinho.id_usuario = '$id_usuario'";
+             WHERE carrinho.cpf = '$cpf'";
 $resultado = banco($server, $user, $password, $db, $consulta);
 
 $total = 0;
