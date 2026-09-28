@@ -1,5 +1,10 @@
 <?php
-if(!isset($_SESSION)) SESSION_START();
+if(!isset($_SESSION)) session_start();
+
+if(!isset($_SESSION['UsuarioId'])){
+    header("Location: cadastro1.php");
+    exit();
+}
 ?>
     
 <!DOCTYPE html>
