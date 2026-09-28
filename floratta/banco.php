@@ -11,6 +11,12 @@ if(isset($B1)){
     $consulta = "INSERT INTO usuarios (id, nome, cpf, endereco, bairro, cidade, estado, cep) VALUES (NULL, '$nome', '$cpf', '$endereco', '$bairro', '$cidade', '$estado', '$cep')";
     banco($server, $user, $password, $db, $consulta);
 
+    // Busca o id que acabou de ser gerado, para usar na etapa 2
+    $consulta = "SELECT id FROM usuarios WHERE cpf = '$cpf'";
+    $resultado = banco($server, $user, $password, $db, $consulta);
+    $linha = $resultado->fetch_assoc();
+
+    $_SESSION['UsuarioId'] = $linha['id'];
     $_SESSION['Cpf'] = $cpf;
     $_SESSION['Nome'] = $nome;
 
@@ -20,10 +26,15 @@ if(isset($B1)){
 
 if(isset($B2)){
 
-    $cpf = $_SESSION['Cpf'];
+    if(!isset($_SESSION['UsuarioId'])){
+        header("Location: cadastro1.php");
+        exit();
+    }
+
+    $usuario_id = $_SESSION['UsuarioId'];
     $senha = md5($senha);
 
-    $consulta = "INSERT INTO login (id, login, senha, cpf) VALUES (NULL, '$login', '$senha', '$cpf')";
+    $consulta = "INSERT INTO login (id, login, senha, usuario_id) VALUES (NULL, '$login', '$senha', '$usuario_id')";
     banco($server, $user, $password, $db, $consulta);
 
     header("Location: login.php");
@@ -42,13 +53,14 @@ if(isset($B3)){
 
         if($senha == $linha['senha']){
 
-            $consulta = "SELECT * FROM usuarios WHERE cpf = '".$linha['cpf']."'";
+            $consulta = "SELECT * FROM usuarios WHERE id = '".$linha['usuario_id']."'";
             $resultado = banco($server, $user, $password, $db, $consulta);
             $usuario = $resultado->fetch_assoc();
 
             $_SESSION['Logado'] = 'ok';
             $_SESSION['Login'] = $linha['login'];
-            $_SESSION['Cpf'] = $linha['cpf'];
+            $_SESSION['UsuarioId'] = $usuario['id'];
+            $_SESSION['Cpf'] = $usuario['cpf'];
             $_SESSION['Nome'] = $usuario['nome'];
 
             header("Location: produtos.php");
@@ -69,8 +81,12 @@ if(isset($B3)){
 
 if(isset($B5)){
 
+    if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
+        header("Location: login.php");
+        exit();
+    }
+
     $cpf = $_SESSION['Cpf'];
-    $id_produto = $id_produto;
     $quantidade = (int)$quantidade;
     if($quantidade < 1) $quantidade = 1;
 
@@ -92,7 +108,11 @@ if(isset($B5)){
 
 if(isset($B6)){
 
-    $id_carrinho = $id_carrinho;
+    if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
+        header("Location: login.php");
+        exit();
+    }
+
     $cpf = $_SESSION['Cpf'];
 
     $consulta = "DELETE FROM carrinho WHERE id = '$id_carrinho' AND cpf = '$cpf'";
@@ -103,6 +123,11 @@ if(isset($B6)){
 }
 
 if(isset($B4)){
+
+    if(!isset($_SESSION['Logado']) || $_SESSION['Logado'] != 'ok'){
+        header("Location: login.php");
+        exit();
+    }
 
     $cpf = $_SESSION['Cpf'];
     $login = $_SESSION['Login'];
