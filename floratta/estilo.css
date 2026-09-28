@@ -162,3 +162,14 @@ footer {
     padding: 20px;
     margin-top: 50px;
 }
+
+.erro {
+    background: #ffe0e0;
+    color: #a11;
+    border: 1px solid #a11;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 15px auto;
+    max-width: 400px;
+    text-align: center;
+}
