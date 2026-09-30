@@ -11,7 +11,6 @@ if(isset($B1)){
     $consulta = "INSERT INTO usuarios (id, nome, cpf, endereco, bairro, cidade, estado, cep) VALUES (NULL, '$nome', '$cpf', '$endereco', '$bairro', '$cidade', '$estado', '$cep')";
     banco($server, $user, $password, $db, $consulta);
 
-    // Busca o id que acabou de ser gerado, para usar na etapa 2
     $consulta = "SELECT id FROM usuarios WHERE cpf = '$cpf'";
     $resultado = banco($server, $user, $password, $db, $consulta);
     $linha = $resultado->fetch_assoc();
